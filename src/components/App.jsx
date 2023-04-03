@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ImageGallery } from './ImageGallery/ImageGallery.jsx';
 import { Component } from 'react';
+import { Searchbar } from './Searchbar/Searchbar.jsx';
 
 const API_KEY = '33302175-33178da1359f032779e0154a7';
 // axios.defaults.baseURL =
@@ -15,7 +16,7 @@ export class App extends Component {
     try {
       const response = await axios.get('https://pixabay.com/api/', {
         params: {
-          q: 'cat',
+          q: 'girl',
           page: 1,
           key: API_KEY,
           image_type: 'photo',
@@ -32,9 +33,11 @@ export class App extends Component {
   }
 
   render() {
+    const { images } = this.state;
     return (
       <div className="App">
-        <ImageGallery />
+        <Searchbar />
+        <ImageGallery images={images} />
       </div>
     );
   }

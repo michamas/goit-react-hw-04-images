@@ -10,13 +10,16 @@ const API_KEY = '33302175-33178da1359f032779e0154a7';
 export class App extends Component {
   state = {
     images: [],
+    query: '',
+    isLoading: false,
   };
 
-  async componentDidMount() {
+  async componentDidMount(keyword) {
+    this.setState({ isLoading: true });
     try {
       const response = await axios.get('https://pixabay.com/api/', {
         params: {
-          q: 'girl',
+          q: keyword,
           page: 1,
           key: API_KEY,
           image_type: 'photo',
@@ -29,14 +32,33 @@ export class App extends Component {
       });
     } catch (error) {
       console.log(error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   }
 
+  handleChange = event => {
+    event.preventDefault();
+    this.setState({
+      query: event.target.value,
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    return this.componentDidMount(this.state.query);
+  };
+
   render() {
-    const { images } = this.state;
+    const { images, isLoading, query } = this.state;
     return (
       <div className="App">
-        <Searchbar />
+        <Searchbar
+          value={query}
+          onChange={this.handleChange}
+          onSubmit={this.handleSubmit}
+        />
+        {isLoading && <p>LOADING</p>}
         <ImageGallery images={images} />
       </div>
     );

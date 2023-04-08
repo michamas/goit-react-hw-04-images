@@ -1,3 +1,3 @@
-export const ImageGalleryItem = ({ webFormat, largeFormat, tags }) => (
+export const ImageGalleryItem = ({ webFormat, tags }) => (
   <img src={webFormat} alt={tags} />
 );

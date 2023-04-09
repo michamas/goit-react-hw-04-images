@@ -2,6 +2,8 @@ import axios from 'axios';
 import { ImageGallery } from './ImageGallery/ImageGallery.jsx';
 import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar.jsx';
+import { Loader } from './Loader/Loader.jsx';
+import { Button } from './Button/Button.jsx';
 
 const API_KEY = '33302175-33178da1359f032779e0154a7';
 // axios.defaults.baseURL =
@@ -12,30 +14,55 @@ export class App extends Component {
     images: [],
     query: '',
     isLoading: false,
+    errMessage: '',
+    page: 1,
   };
 
-  async componentDidMount(keyword) {
+  componentDidMount() {
+    this.loadImages();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.page !== this.state.page) {
+      this.loadImages();
+    }
+  }
+
+  loadImages = async () => {
+    const { page, query } = this.state;
     this.setState({ isLoading: true });
     try {
       const response = await axios.get('https://pixabay.com/api/', {
         params: {
-          q: keyword,
-          page: 1,
+          q: query,
+          page: page,
           key: API_KEY,
           image_type: 'photo',
           orientation: 'horizontal',
           per_page: 12,
         },
       });
+      // this.setState(prevState => ({
+      //   images: [...prevState.images, ...response.data.hits],
+      //   errMessage: '',
+      // }));
+      //! KOD POWYŻEJ - PRZYCISK LOAD MORE DZIALA JAK NALEZY, ALE
+      //! DUBLUJĄ SIĘ INDEXY Z JAKIEGOŚ POWODU
+
+      console.log(response.data);
       this.setState({
-        images: response.data.hits,
+        images: [response.data.hits],
+        errMessage: '',
       });
     } catch (error) {
       console.log(error);
+      this.setState({
+        errorMsg: 'Error while loading data. Try again later.',
+      });
     } finally {
       this.setState({ isLoading: false });
     }
-  }
+  };
 
   handleChange = event => {
     event.preventDefault();
@@ -46,11 +73,19 @@ export class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    return this.componentDidMount(this.state.query);
+    return this.loadImages();
+  };
+
+  loadMore = () => {
+    this.setState(prevState => {
+      return {
+        page: prevState.page + 1,
+      };
+    });
   };
 
   render() {
-    const { images, isLoading, query } = this.state;
+    const { images, isLoading, query, errMessage } = this.state;
     return (
       <div className="App">
         <Searchbar
@@ -58,8 +93,10 @@ export class App extends Component {
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
-        {isLoading && <p>LOADING</p>}
+        {isLoading && <Loader />}
+        {errMessage && <p>{errMessage}</p>}
         <ImageGallery images={images} />
+        <Button onClick={this.loadMore} isNeeded={'true'} />
       </div>
     );
   }

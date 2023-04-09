@@ -1,3 +1,5 @@
 export const ImageGalleryItem = ({ webFormat, tags }) => (
-  <img src={webFormat} alt={tags} />
+  <li className="ImageGalleryItem">
+    <img src={webFormat} alt={tags} />
+  </li>
 );

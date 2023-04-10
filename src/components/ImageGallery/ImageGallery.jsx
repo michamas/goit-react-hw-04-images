@@ -6,6 +6,7 @@ export const ImageGallery = ({ images }) => (
       <ImageGalleryItem
         key={image.id}
         webFormat={image.webformatURL}
+        largeFormat={image.largeImageURL}
         tags={image.tags}
       />
     ))}

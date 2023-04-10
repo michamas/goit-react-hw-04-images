@@ -42,16 +42,23 @@ export class App extends Component {
           per_page: 12,
         },
       });
+
+      //? 1
       // this.setState(prevState => ({
       //   images: [...prevState.images, ...response.data.hits],
       //   errMessage: '',
       // }));
-      //! KOD POWYŻEJ - PRZYCISK LOAD MORE DZIALA JAK NALEZY, ALE
-      //! DUBLUJĄ SIĘ INDEXY Z JAKIEGOŚ POWODU
 
-      console.log(response.data);
+      //? 2
+      // this.setState(() => {
+      //   return {
+      //     images: [...this.state.images, ...response.data.hits],
+      //   };
+      // });
+
+      //? 3
       this.setState({
-        images: [response.data.hits],
+        images: response.data.hits,
         errMessage: '',
       });
     } catch (error) {

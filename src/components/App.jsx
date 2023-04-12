@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { ImageGallery } from './ImageGallery/ImageGallery.jsx';
+import { ImageGallery } from './ImageGallery/ImageGallery.js';
 import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar.jsx';
 import { Loader } from './Loader/Loader.jsx';
 import { Button } from './Button/Button.jsx';
+import { Modal } from './Modal/Modal.jsx';
 
 const API_KEY = '33302175-33178da1359f032779e0154a7';
 // axios.defaults.baseURL =
@@ -16,6 +17,8 @@ export class App extends Component {
     isLoading: false,
     errMessage: '',
     page: 1,
+    isModal: false,
+    imageLarge: '',
   };
 
   componentDidMount() {
@@ -30,6 +33,7 @@ export class App extends Component {
 
   loadImages = async () => {
     const { page, query } = this.state;
+
     this.setState({ isLoading: true });
     try {
       const response = await axios.get('https://pixabay.com/api/', {
@@ -50,17 +54,17 @@ export class App extends Component {
       // }));
 
       //? 2
-      // this.setState(() => {
-      //   return {
-      //     images: [...this.state.images, ...response.data.hits],
-      //   };
-      // });
+      this.setState(() => {
+        return {
+          images: [...this.state.images, ...response.data.hits],
+        };
+      });
 
       //? 3
-      this.setState({
-        images: response.data.hits,
-        errMessage: '',
-      });
+      // this.setState({
+      //   images: response.data.hits,
+      //   errMessage: '',
+      // });
     } catch (error) {
       console.log(error);
       this.setState({
@@ -80,6 +84,9 @@ export class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    this.setState({
+      images: [],
+    });
     return this.loadImages();
   };
 
@@ -91,8 +98,23 @@ export class App extends Component {
     });
   };
 
+  closeModal = () => {
+    this.setState({
+      isModal: false,
+      imageLarge: '',
+    });
+  };
+
+  showModal = url => {
+    this.setState({
+      isModal: true,
+      imageLarge: url,
+    });
+  };
+
   render() {
-    const { images, isLoading, query, errMessage } = this.state;
+    const { images, isLoading, query, errMessage, isModal, imageLarge } =
+      this.state;
     return (
       <div className="App">
         <Searchbar
@@ -100,10 +122,23 @@ export class App extends Component {
           onChange={this.handleChange}
           onSubmit={this.handleSubmit}
         />
+
+        {/* RENDER LODER WHILE WAITING */}
         {isLoading && <Loader />}
+
+        {/* DISPLAY ERROR IF IT APPEARS */}
         {errMessage && <p>{errMessage}</p>}
-        <ImageGallery images={images} />
-        <Button onClick={this.loadMore} isNeeded={'true'} />
+
+        {/* LOAD IMAGES */}
+        <ImageGallery images={images} onShow={this.showModal} />
+
+        {/* RENDER BUTTON IF MORE THEN 1 PAGE OF RESULTS */}
+        {images.length >= 12 && (
+          <Button onClick={this.loadMore} isNeeded={'true'} />
+        )}
+
+        {/* RENDER MODAL WINDOW */}
+        {isModal && <Modal onClose={this.closeModal} imageLarge={imageLarge} />}
       </div>
     );
   }

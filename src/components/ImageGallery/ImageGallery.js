@@ -1,6 +1,6 @@
-import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem.jsx';
+import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem.js';
 
-export const ImageGallery = ({ images }) => (
+export const ImageGallery = ({ images, onShow }) => (
   <ul className="ImageGallery">
     {images.map(image => (
       <ImageGalleryItem
@@ -8,6 +8,7 @@ export const ImageGallery = ({ images }) => (
         webFormat={image.webformatURL}
         largeFormat={image.largeImageURL}
         tags={image.tags}
+        onShow={onShow}
       />
     ))}
   </ul>

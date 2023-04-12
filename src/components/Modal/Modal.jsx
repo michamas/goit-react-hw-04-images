@@ -10,7 +10,7 @@ export class Modal extends Component {
   }
 
   handleClose = event => {
-    if (event.key === 'Escape' || 'blur') {
+    if (event.code === 'Escape') {
       return this.props.onClose();
     }
   };
@@ -20,7 +20,7 @@ export class Modal extends Component {
     return (
       <div className="Overlay" onClose={this.props.onClose}>
         <div className="Modal">
-          <img src={imageLarge} alt="" />
+          <img src={imageLarge} alt="MagnifiedImage" />
         </div>
       </div>
     );

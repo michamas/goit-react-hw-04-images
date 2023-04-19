@@ -1,30 +1,31 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 
-export class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('mousedown', this.handleClose);
-    window.addEventListener('keydown', this.handleClose);
-  }
+export const Modal = ({ imageLarge, onClose }) => {
+  // useEffect(() => { function that will execute }, [ condition on which the function will execute ])
+  useEffect(() => {
+    // console.log('Mounting phase');
+    window.addEventListener('mousedown', handleClose);
+    window.addEventListener('keydown', handleClose);
 
-  componentWillUnmount() {
-    window.removeEventListener('mousedown', this.handleClose);
-    window.removeEventListener('keydown', this.handleClose);
-  }
+    return () => {
+      // console.log('Unmounting phase');
+      window.removeEventListener('mousedown', handleClose);
+      window.removeEventListener('keydown', handleClose);
+    };
+  });
 
-  handleClose = event => {
+  const handleClose = event => {
     if (event.code === 'Escape' || 'click') {
-      return this.props.onClose();
+      return onClose();
     }
   };
 
-  render() {
-    const { imageLarge } = this.props;
-    return (
-      <div className="Overlay" onClose={this.props.onClose}>
-        <div className="Modal">
-          <img src={imageLarge} alt="MagnifiedImage" />
-        </div>
+  // const { imageLarge } = this.props;
+  return (
+    <div className="Overlay" onClose={onClose}>
+      <div className="Modal">
+        <img src={imageLarge} alt="MagnifiedImage" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};

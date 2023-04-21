@@ -2,9 +2,9 @@ import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem.j
 
 export const ImageGallery = ({ images, onShow }) => (
   <ul className="ImageGallery">
-    {images.map(image => (
+    {images.map((image, index) => (
       <ImageGalleryItem
-        key={image.id}
+        key={(image.id, index)}
         webFormat={image.webformatURL}
         largeFormat={image.largeImageURL}
         tags={image.tags}

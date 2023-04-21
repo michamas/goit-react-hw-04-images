@@ -20,6 +20,10 @@ export const App = () => {
   const [imageLarge, setImageLarge] = useState('');
 
   useEffect(() => {
+    loadImages();
+  }, []);
+
+  useEffect(() => {
     if (query !== '') {
       loadImages();
     }

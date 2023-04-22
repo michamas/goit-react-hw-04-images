@@ -19,54 +19,49 @@ export const App = () => {
   const [isModal, setIsModal] = useState(false);
   const [imageLarge, setImageLarge] = useState('');
 
-  useEffect(() => {
-    loadImages();
-  }, []);
-
-  useEffect(() => {
-    if (query !== '') {
-      loadImages();
-    }
-  }, [query, page]);
-
-  const loadImages = async () => {
-    setIsLoading(true);
-
-    try {
-      const response = await axios.get('https://pixabay.com/api/', {
-        params: {
-          q: query,
-          page: page,
-          key: API_KEY,
-          image_type: 'photo',
-          orientation: 'horizontal',
-          per_page: 12,
-        },
-      });
-      setImages(prevImages => [...prevImages, ...response.data.hits]);
-    } catch (error) {
-      console.log(error);
-      setErrMessage('Error while loading data. Try again later.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleChange = event => {
     event.preventDefault();
+    setImages([]);
     setQuery(event.target.value);
   };
 
   const handleSubmit = event => {
     event.preventDefault();
-    setImages([]);
-    return loadImages();
+    setPage(1);
   };
 
+  useEffect(() => {
+    const loadImages = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await axios.get('https://pixabay.com/api/', {
+          params: {
+            q: query,
+            page: page,
+            key: API_KEY,
+            image_type: 'photo',
+            orientation: 'horizontal',
+            per_page: 12,
+          },
+        });
+        setImages(prevImages => [...prevImages, ...response.data.hits]);
+      } catch (error) {
+        console.log(error);
+        setErrMessage('Error while loading data. Try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (query !== '') {
+      loadImages();
+    }
+  }, [query, page]);
+
   const loadMore = async () => {
-    console.log('load more');
-    setPage(page + 1);
-    // loadImages();
+    // console.log('load more');
+    setPage(prevPage => prevPage + 1);
   };
 
   const closeModal = () => {
